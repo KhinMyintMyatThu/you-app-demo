@@ -1,19 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:you_app_demo/utils/constants/route_constants.dart';
 import 'package:you_app_demo/utils/widgets/text_form_widget.dart';
 
-import '../../utils/widgets/back_button_widget.dart';
+import '../utils/widgets/back_button_widget.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfilePageState extends State<ProfilePage> {
   final boxDecoration = const BoxDecoration(
       color: Colors.black,
       borderRadius: BorderRadius.all(
@@ -22,13 +20,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   double _height = 130;
   bool _isEditing = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 120,
-        leading: const BackButtonWidget(),
+        leading: BackButtonWidget(
+          onTap: () => {},
+        ),
         title: const Text(
           '@johndoe',
           style: TextStyle(fontSize: 15),
@@ -92,7 +95,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      if (!_isEditing) ...[ //TODO:
+                      if (!_isEditing) ...[
+                        //TODO:
                         const Text(
                           'Add in your about to help others know you better',
                           style: TextStyle(color: Colors.white),
@@ -167,89 +171,110 @@ class _ProfileScreenState extends State<ProfileScreen> {
     //                     )
     //                   ] else ...[
     //                   ]
-    return const Column(
+    return Column(
       children: [
         //Name
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Display name:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         //Gender
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Gender:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         //Birthday
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Birthday:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         //Horoscope
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Horoscope:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         //Zodiac
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Zodiac:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         //Height
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Height:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         //Weight
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Weight:',
               style: TextStyle(color: Colors.white),
             ),
-            TextFormWidget(txtHint: 'Enter name')
+            TextFormWidget(
+              txtHint: 'Enter name',
+              txtController: TextEditingController(),
+            )
           ],
         )
       ],

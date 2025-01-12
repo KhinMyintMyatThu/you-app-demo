@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:you_app_demo/utils/constants/route_constants.dart';
 
 class ButtonWidget extends StatelessWidget {
   final String btnTxt;
-  const ButtonWidget({super.key, required this.btnTxt});
+  final void Function()? onPressed;
+  const ButtonWidget(
+      {super.key, required this.btnTxt, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class ButtonWidget extends StatelessWidget {
       width: 250,
       height: 40,
       child: ElevatedButton(
-        onPressed: () => {_login(context)},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue,
             shape: const RoundedRectangleBorder(
@@ -27,9 +28,4 @@ class ButtonWidget extends StatelessWidget {
     );
   }
 
-  _login(context) {
-    Navigator.pushNamed(context, loginRoute);
-  }
-
-  _register() {}
 }

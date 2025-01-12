@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:you_app_demo/utils/widgets/back_button_widget.dart';
 
-class InterestScreen extends StatefulWidget {
-  const InterestScreen({super.key});
+class InterestPage extends StatefulWidget {
+  const InterestPage({super.key});
 
   @override
-  State<InterestScreen> createState() => _InterestScreenState();
+  State<InterestPage> createState() => _InterestPageState();
 }
 
-class _InterestScreenState extends State<InterestScreen> {
+class _InterestPageState extends State<InterestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 120,
-        leading: const BackButtonWidget(),
+        leading: BackButtonWidget(
+          onTap: () => {},
+        ),
         actions: const [
           Padding(
             padding: EdgeInsets.all(10.0),
