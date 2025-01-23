@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class BackButtonWidget extends StatelessWidget {
   final void Function()? onTap;
 
-  const BackButtonWidget({
-    super.key,
-    required this.onTap
-  });
+  const BackButtonWidget({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +16,13 @@ class BackButtonWidget extends StatelessWidget {
             Icon(
               Icons.arrow_back_ios,
               size: 15,
+              color: Colors.white,
             ),
-            Flexible(child: Text('Back')),
+            Flexible(
+                child: Text(
+              'Back',
+              style: TextStyle(color: Colors.white),
+            )),
           ],
         ),
       ),

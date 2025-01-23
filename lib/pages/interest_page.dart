@@ -1,39 +1,369 @@
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:you_app_demo/controllers/auth_controller.dart';
+import 'package:you_app_demo/controllers/profile_controller.dart';
+import 'package:you_app_demo/models/user_model.dart';
+import 'package:you_app_demo/utils/constants/widget_constants.dart';
 import 'package:you_app_demo/utils/widgets/back_button_widget.dart';
 
-class InterestPage extends StatefulWidget {
+class InterestPage extends StatelessWidget {
   const InterestPage({super.key});
 
   @override
-  State<InterestPage> createState() => _InterestPageState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const EditableChipFieldExample(),
+    );
+  }
 }
 
-class _InterestPageState extends State<InterestPage> {
+class EditableChipFieldExample extends StatefulWidget {
+  const EditableChipFieldExample({super.key});
+
+  @override
+  EditableChipFieldExampleState createState() {
+    return EditableChipFieldExampleState();
+  }
+}
+
+class EditableChipFieldExampleState extends State<EditableChipFieldExample> {
+  final FocusNode _chipFocusNode = FocusNode();
+  List<String> interests = <String>[];
+  final ProfileController _profileController = Get.put(ProfileController());
+  final AuthController authController = Get.find<AuthController>();
+
+  @override
+  void initState() {
+    super.initState();
+    final userInterests = _profileController.user.value?.interests?? [];
+    interests.addAll(userInterests);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 120,
+        leadingWidth: 200,
         leading: BackButtonWidget(
-          onTap: () => {},
+          onTap: () => {
+            Get.back(),
+          },
         ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text('Save'),
-          ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              UserModel? user = _profileController.user.value;
+              final token = authController.accessToken.value;
+              user!.interests?.clear();
+              user.interests?.addAll(interests);
+              _profileController.updateProfile(user, token);
+              Get.back();
+            },
+            child: const Padding(
+                padding: EdgeInsets.only(right: 10.0),
+                child: Text(
+                  'Save',
+                  style: TextStyle(color: Colors.white),
+                )),
+          )
         ],
+        backgroundColor: const Color(0xFF1F4247),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(35),
+      body: Container(
+        decoration: boxGradientDecoration,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            Text('Tell everyone about yourself'),
-            Text('What interest you?'),
+          children: <Widget>[
+            const SizedBox(height: 100),
+            const Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: Text(
+                'Tell everyone about yourself8',
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                'What interest you?',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: ChipsInput<String>(
+                values: interests,
+                style: const TextStyle(color: Colors.white),
+                strutStyle: const StrutStyle(fontSize: 15),
+                onChanged: _onChanged,
+                onSubmitted: _onSubmitted,
+                chipBuilder: _chipBuilder,
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _chipBuilder(BuildContext context, String topping) {
+    return ToppingInputChip(
+      topping: topping,
+      onDeleted: _onChipDeleted,
+      onSelected: _onChipTapped,
+    );
+  }
+
+  void _onChipTapped(String topping) {}
+
+  void _onChipDeleted(String topping) {
+    setState(() {
+      interests.remove(topping);
+    });
+  }
+
+  void _onSubmitted(String text) {
+    if (text.trim().isNotEmpty) {
+      setState(() {
+        interests = <String>[...interests, text.trim()];
+      });
+    } else {
+      _chipFocusNode.unfocus();
+      setState(() {
+        interests = <String>[];
+      });
+    }
+  }
+
+  void _onChanged(List<String> data) {
+    setState(() {
+      interests = data;
+    });
+  }
+}
+
+class ChipsInput<T> extends StatefulWidget {
+  const ChipsInput({
+    super.key,
+    required this.values,
+    this.decoration = const InputDecoration(),
+    this.style,
+    this.strutStyle,
+    required this.chipBuilder,
+    required this.onChanged,
+    this.onChipTapped,
+    this.onSubmitted,
+    this.onTextChanged,
+  });
+
+  final List<T> values;
+  final InputDecoration decoration;
+  final TextStyle? style;
+  final StrutStyle? strutStyle;
+
+  final ValueChanged<List<T>> onChanged;
+  final ValueChanged<T>? onChipTapped;
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onTextChanged;
+
+  final Widget Function(BuildContext context, T data) chipBuilder;
+
+  @override
+  ChipsInputState<T> createState() => ChipsInputState<T>();
+}
+
+class ChipsInputState<T> extends State<ChipsInput<T>> {
+  @visibleForTesting
+  late final ChipsInputEditingController<T> controller;
+
+  String _previousText = '';
+  TextSelection? _previousSelection;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = ChipsInputEditingController<T>(
+      <T>[...widget.values],
+      widget.chipBuilder,
+    );
+    controller.addListener(_textListener);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_textListener);
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  void _textListener() {
+    final String currentText = controller.text;
+
+    if (_previousSelection != null) {
+      final int currentNumber = countReplacements(currentText);
+      final int previousNumber = countReplacements(_previousText);
+
+      final int cursorEnd = _previousSelection!.extentOffset;
+      final int cursorStart = _previousSelection!.baseOffset;
+
+      final List<T> values = <T>[...widget.values];
+
+      // If the current number and the previous number of replacements are different, then
+      // the user has deleted the InputChip using the keyboard. In this case, we trigger
+      // the onChanged callback. We need to be sure also that the current number of
+      // replacements is different from the input chip to avoid double-deletion.
+      if (currentNumber < previousNumber && currentNumber != values.length) {
+        if (cursorStart == cursorEnd) {
+          values.removeRange(cursorStart - 1, cursorEnd);
+        } else {
+          if (cursorStart > cursorEnd) {
+            values.removeRange(cursorEnd, cursorStart);
+          } else {
+            values.removeRange(cursorStart, cursorEnd);
+          }
+        }
+        widget.onChanged(values);
+      }
+    }
+
+    _previousText = currentText;
+    _previousSelection = controller.selection;
+  }
+
+  static int countReplacements(String text) {
+    return text.codeUnits
+        .where(
+            (int u) => u == ChipsInputEditingController.kObjectReplacementChar)
+        .length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    controller.updateValues(<T>[...widget.values]);
+
+    return TextField(
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ), // Default border
+      ),
+      minLines: 1,
+      maxLines: 3,
+      textInputAction: TextInputAction.done,
+      style: widget.style,
+      strutStyle: widget.strutStyle,
+      controller: controller,
+      onChanged: (String value) =>
+          widget.onTextChanged?.call(controller.textWithoutReplacements),
+      onSubmitted: (String value) =>
+          widget.onSubmitted?.call(controller.textWithoutReplacements),
+    );
+  }
+}
+
+class ChipsInputEditingController<T> extends TextEditingController {
+  ChipsInputEditingController(this.values, this.chipBuilder)
+      : super(
+          text: String.fromCharCode(kObjectReplacementChar) * values.length,
+        );
+
+  // This constant character acts as a placeholder in the TextField text value.
+  // There will be one character for each of the InputChip displayed.
+  static const int kObjectReplacementChar = 0xFFFE;
+
+  List<T> values;
+
+  final Widget Function(BuildContext context, T data) chipBuilder;
+
+  /// Called whenever chip is either added or removed
+  /// from the outside the context of the text field.
+  void updateValues(List<T> values) {
+    if (values.length != this.values.length) {
+      final String char = String.fromCharCode(kObjectReplacementChar);
+      final int length = values.length;
+      value = TextEditingValue(
+        text: char * length,
+        selection: TextSelection.collapsed(offset: length),
+      );
+      this.values = values;
+    }
+  }
+
+  String get textWithoutReplacements {
+    final String char = String.fromCharCode(kObjectReplacementChar);
+    return text.replaceAll(RegExp(char), '');
+  }
+
+  String get textWithReplacements => text;
+
+  @override
+  TextSpan buildTextSpan(
+      {required BuildContext context,
+      TextStyle? style,
+      required bool withComposing}) {
+    final Iterable<WidgetSpan> chipWidgets =
+        values.map((T v) => WidgetSpan(child: chipBuilder(context, v)));
+
+    return TextSpan(
+      style: style,
+      children: <InlineSpan>[
+        ...chipWidgets,
+        if (textWithoutReplacements.isNotEmpty)
+          TextSpan(text: textWithoutReplacements)
+      ],
+    );
+  }
+}
+
+class ToppingSuggestion extends StatelessWidget {
+  const ToppingSuggestion(this.topping, {super.key, this.onTap});
+
+  final String topping;
+  final ValueChanged<String>? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      key: ObjectKey(topping),
+      title: Text(topping),
+      onTap: () => onTap?.call(topping),
+    );
+  }
+}
+
+class ToppingInputChip extends StatelessWidget {
+  const ToppingInputChip({
+    super.key,
+    required this.topping,
+    required this.onDeleted,
+    required this.onSelected,
+  });
+
+  final String topping;
+  final ValueChanged<String> onDeleted;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(right: 3),
+      child: InputChip(
+        key: ObjectKey(topping),
+        label: Text(topping),
+        onDeleted: () => onDeleted(topping),
+        onSelected: (bool value) => onSelected(topping),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: const EdgeInsets.all(2),
       ),
     );
   }

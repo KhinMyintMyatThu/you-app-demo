@@ -23,18 +23,23 @@ class ApiService {
     }
   }
 
-  Future<dynamic> getData(url, params) async {
-    final response = await http.get(
-      Uri.parse(url),
-    );
+  Future<dynamic> getData(url, String? token) async {
+    try {
+      final response = await http.get(Uri.parse(baseUrl + url), headers: {
+        'x-access-token': token!,
+        'Content-Type': 'application/json',
+      });
 
-    return response;
+      return response;
+    } catch (e) {
+      return null;
+    }
   }
 
-  Future<dynamic> putData(url, params) async {
+  Future<dynamic> putData(url, dynamic params, String token) async {
     final response = await http.put(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      Uri.parse(baseUrl + url),
+      headers: { 'x-access-token': token, 'Content-Type': 'application/json'},
       body: jsonEncode(params),
     );
 

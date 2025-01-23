@@ -16,26 +16,26 @@ class AuthController extends GetxController {
   // Reactive token state
   var accessToken = Rxn<String>();
 
-
   final AuthService _authService = AuthService();
 
-  Future<void> register(
-      String email, String username, String password) async {
+  Future<void> register(String email, String username, String password) async {
     isLoading.value = true;
 
     try {
-      final token = await _authService.register(
+      final response = await _authService.register(
         email: email,
         username: username,
         password: password,
       );
 
-      if (token != null) {
-        userToken.value = token;
+      if (response == 'Created') {
         isLoggedIn.value = false;
-        Get.offNamed(profileRoute); // Navigate to Home Page
-      } else {
-        Get.snackbar('Error', 'Invalid credentials');
+        Get.snackbar('Message', 'Successfully registered!');
+        Get.offNamed(loginRoute); // Navigate to Home Page
+      } else if(response == 'User already exists') {
+        Get.snackbar('Error', 'Existing user!');
+      } else{
+         Get.snackbar('Error', 'Invalid credentials');
       }
     } catch (e) {
       Get.snackbar('Error', 'An unexpected error occurred');
@@ -44,8 +44,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> login(
-      String email, String username, String password) async {
+  Future<void> login(String email, String username, String password) async {
     isLoading.value = true;
 
     try {
@@ -58,6 +57,7 @@ class AuthController extends GetxController {
       if (token != null) {
         userToken.value = token;
         isLoggedIn.value = false;
+        saveToken(token);
         Get.offNamed(profileRoute); // Navigate to Home Page
       } else {
         Get.snackbar('Error', 'Invalid credentials');
@@ -69,7 +69,7 @@ class AuthController extends GetxController {
     }
   }
 
-   bool isEmailValid(String email) {
+  bool isEmailValid(String email) {
     final emailRegExp = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );

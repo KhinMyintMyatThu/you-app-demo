@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:you_app_demo/utils/constants/route_constants.dart';
+import 'package:you_app_demo/utils/constants/widget_constants.dart';
 
 import '../utils/widgets/button_widget.dart';
 
@@ -11,7 +12,7 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        color: Colors.pink,
+        decoration: boxGradientDecoration,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

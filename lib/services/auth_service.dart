@@ -19,12 +19,12 @@ class AuthService {
       },
     );
     if (response.statusCode == 201) {
-      final token = await login(
-        email: email,
-        username: username,
-        password: password,
-      );
-      return token;
+      final responseJson = jsonDecode(response.body);
+      if(responseJson['message'] == 'User already exists'){
+        return responseJson['message'];
+      } else {
+        return 'Created';
+      }
     } else {
       return null;
     }
@@ -36,7 +36,7 @@ class AuthService {
     required String password,
   }) async {
     final response = await _apiService.postData(
-      baseUrl + loginUrl,
+      loginUrl,
       params: {
         'email': email,
         'username': username,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:you_app_demo/controllers/auth_controller.dart';
 import 'package:you_app_demo/utils/constants/route_constants.dart';
+import 'package:you_app_demo/utils/constants/widget_constants.dart';
 import 'package:you_app_demo/utils/widgets/button_widget.dart';
 import '../utils/widgets/back_button_widget.dart';
 import '../utils/widgets/text_form_widget.dart';
@@ -26,70 +27,95 @@ class RegisterPage extends StatelessWidget {
             Get.back(),
           },
         ),
+        backgroundColor: const Color(0xFF1F4247),
       ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        decoration: boxGradientDecoration,
+        child: Stack(children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
               children: [
-                const SizedBox(height: 50),
-                const Text(
-                  'Register',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 50),
+                    const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormWidget(
+                      txtHint: 'Enter Email',
+                      txtController: emailCtrl,
+                      width: 250,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormWidget(
+                      txtHint: 'Enter Username',
+                      txtController: usernameCtrl,
+                      width: 250,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormWidget(
+                      txtHint: 'Create Password',
+                      isPassword: true,
+                      txtController: pwdCtrl,
+                      width: 250,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormWidget(
+                      txtHint: 'Confrim Password',
+                      isPassword: true,
+                      txtController: confrirmPwdCtrl,
+                      width: 250,
+                    ),
+                    const SizedBox(height: 20),
+                    ButtonWidget(
+                      btnTxt: 'Register',
+                      onPressed: () => {register(context)},
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                TextFormWidget(
-                  txtHint: 'Enter Email',
-                  txtController: emailCtrl,
-                ),
-                const SizedBox(height: 20),
-                TextFormWidget(
-                  txtHint: 'Enter Username',
-                  txtController: usernameCtrl,
-                ),
-                const SizedBox(height: 20),
-                TextFormWidget(
-                  txtHint: 'Create Password',
-                  isPassword: true,
-                  txtController: pwdCtrl,
-                ),
-                const SizedBox(height: 20),
-                TextFormWidget(
-                  txtHint: 'Confrim Password',
-                  isPassword: true,
-                  txtController: confrirmPwdCtrl,
-                ),
-                const SizedBox(height: 20),
-                ButtonWidget(
-                  btnTxt: 'Register',
-                  onPressed: () => {register(context)},
-                ),
-                const SizedBox(height: 20),
+                RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(children: [
+                      const TextSpan(
+                          text: 'Have an Account? ',
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 12.0)),
+                      TextSpan(
+                        text: 'Login here',
+                        style: const TextStyle(
+                          color: Colors.yellow,
+                          fontSize: 12.0,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.offNamed(loginRoute);
+                          },
+                      )
+                    ]))
               ],
             ),
-            RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(children: [
-                  const TextSpan(
-                      text: 'Have an Account? ',
-                      style: TextStyle(color: Colors.black, fontSize: 12.0)),
-                  TextSpan(
-                    text: 'Login here',
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12.0,
-                      decoration: TextDecoration.underline,
+          ),
+          Obx(() {
+            return authController.isLoading.value
+                ? Container(
+                    color: Colors.black
+                        .withOpacity(0.5), // Semi-transparent overlay
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                       Get.offNamed(loginRoute);
-                      },
                   )
-                ]))
-          ],
-        ),
+                : const SizedBox.shrink(); // Empty container when not loading
+          }),
+        ]),
       ),
     );
   }
