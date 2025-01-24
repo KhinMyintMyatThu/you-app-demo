@@ -7,6 +7,8 @@ class ProfileController {
   var isLoading = false.obs; // Observable to show loading
 
   final ProfileService _profileService = ProfileService();
+
+  get userName => null;
   // final AuthController _authController = AuthController();
 
   Future<void> getProfile(token) async {

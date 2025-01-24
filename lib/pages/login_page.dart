@@ -68,6 +68,7 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
                 RichText(
+                    key: const Key('register_text'),
                     textAlign: TextAlign.center,
                     text: TextSpan(children: [
                       const TextSpan(

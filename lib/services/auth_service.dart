@@ -3,14 +3,14 @@ import 'package:you_app_demo/utils/constants/api_constants.dart';
 import 'dart:convert';
 
 class AuthService {
-  final ApiService _apiService = ApiService();
+  final ApiService apiService = ApiService();
 
   Future<String?> register({
     required String email,
     required String username,
     required String password,
   }) async {
-    final response = await _apiService.postData(
+    final response = await apiService.postData(
       registerUrl,
       params: {
         'email': email,
@@ -35,7 +35,7 @@ class AuthService {
     required String username,
     required String password,
   }) async {
-    final response = await _apiService.postData(
+    final response = await apiService.postData(
       loginUrl,
       params: {
         'email': email,

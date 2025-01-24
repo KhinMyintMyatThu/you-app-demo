@@ -28,7 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  bloc: ^8.1.4
+  bloc: ^9.0.0
   cupertino_icons: ^1.0.6
   equatable: ^2.0.5
   flutter:
@@ -38,11 +38,13 @@ dependencies:
   http: ^1.2.1
   image_picker: ^1.1.2
   intl: ^0.20.1
-  routingkit: ^1.0.0
+  mockito: ^5.4.5
+  root_tester: ^0.0.5
+  routingkit: ^4.1.1
   shimmer: ^3.0.0
 
 dev_dependencies:
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
 
